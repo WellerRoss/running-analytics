@@ -1,8 +1,6 @@
-from datetime import UTC, datetime, timedelta
-
-from garmin_running_data.models import Activity, ActivitySample
 from garmin_running_data.storage import Storage
 
+from running_analytics.data import format_pace, recent_activities
 from running_analytics.metrics import (
     Interval,
     cardiac_drift,
@@ -10,42 +8,6 @@ from running_analytics.metrics import (
     run_walk_intervals,
     seconds_to_hr_ceiling,
 )
-
-
-def _as_aware(dt: datetime) -> datetime:
-    return dt if dt.tzinfo is not None else dt.replace(tzinfo=UTC)
-
-
-def _load_samples(storage: Storage, activity_id: str) -> list[ActivitySample]:
-    df = storage.read_samples(activity_id)
-    if df.is_empty():
-        return []
-    return [ActivitySample(**row) for row in df.iter_rows(named=True)]
-
-
-def _recent_activities(storage: Storage, days: int) -> list[tuple[Activity, list[ActivitySample]]]:
-    df = storage.read_activities()
-    if df.is_empty():
-        return []
-
-    cutoff = datetime.now(UTC) - timedelta(days=days)
-    results = []
-    for row in df.iter_rows(named=True):
-        if row["start_time"] is None:
-            continue
-        activity = Activity(**row)
-        if _as_aware(activity.start_time) < cutoff:
-            continue
-        samples = _load_samples(storage, activity.activity_id)
-        results.append((activity, samples))
-
-    results.sort(key=lambda pair: pair[0].start_time, reverse=True)
-    return results
-
-
-def _format_pace(seconds_per_km: float) -> str:
-    minutes, seconds = divmod(int(seconds_per_km), 60)
-    return f"{minutes}:{seconds:02d}"
 
 
 def _interval_summary(intervals: list[Interval]) -> str:
@@ -81,7 +43,7 @@ def build_report(storage: Storage, days: int, hr_ceiling: int | None = None) -> 
     missing samples, and heuristic run/walk classification (see metrics.py) mean
     small differences between runs shouldn't be over-interpreted.
     """
-    activities = _recent_activities(storage, days)
+    activities = recent_activities(storage, days)
     if not activities:
         return (
             f"No activities in the last {days} days. "
@@ -117,7 +79,7 @@ def build_report(storage: Storage, days: int, hr_ceiling: int | None = None) -> 
 
         pace_150 = pace_at_hr(samples, hr_target=150)
         if pace_150 is not None:
-            lines.append(f"- Pace at ~150 bpm: {_format_pace(pace_150)}/km")
+            lines.append(f"- Pace at ~150 bpm: {format_pace(pace_150)}/km")
 
         lines.append("")
 

@@ -21,12 +21,19 @@ uses if you haven't overridden `DATA_DIR`. Either way, run `grd sync` in
 ## Usage
 
 ```bash
-uv run ra --days 14                    # Markdown report to stdout
-uv run ra --days 14 --hr-ceiling 165   # also report time-to-reach 165bpm per run
-uv run ra --days 14 --out report.md    # write to a file instead
+uv run ra --days 14                                    # Markdown report to stdout
+uv run ra --days 14 --hr-ceiling 165                   # also report time-to-reach 165bpm per run
+uv run ra --days 14 --out report.md                    # write Markdown to a file instead
+uv run ra --days 14 --format html --out report.html    # standalone HTML report
 ```
 
 (There's only one command, so Typer collapses `ra report ...` to just `ra ...`.)
+
+The HTML report (`html_report.py`) renders the same data as a self-contained "instrument
+panel": stat tiles up top, then one card per run with a proportional run/walk segment bar
+(amber = run, teal = walk/recovery) and a cardiac-drift badge. It's what
+`garmin-running-data`'s scheduled sync regenerates nightly at
+`$DATA_DIR/report.html` — open that file directly in a browser, no server needed.
 
 ## What's in the report
 
