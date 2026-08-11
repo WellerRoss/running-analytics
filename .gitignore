@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secrets and any locally-generated report output (no canonical data lives in this repo,
+# but guard against anything accidentally landing here anyway)
+.env
+*.db
+*.sqlite
+*.parquet
+report.md
+*Zone.Identifier

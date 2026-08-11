@@ -1,0 +1,41 @@
+[project]
+name = "running-analytics"
+version = "0.1.0"
+description = "Derived running metrics (cardiac drift, run/walk intervals, HR-at-pace) and Markdown reports computed from garmin-running-data."
+authors = [
+    { name = "Ross Weller", email = "jwellerross@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "garmin-running-data",
+    "polars>=1.43.2",
+    "typer>=0.27.1",
+]
+
+[project.scripts]
+ra = "running_analytics.cli:app"
+
+[tool.uv.sources]
+garmin-running-data = { path = "../garmin-running-data", editable = true }
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.2",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
