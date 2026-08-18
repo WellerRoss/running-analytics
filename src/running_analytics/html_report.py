@@ -250,7 +250,7 @@ def build_html_report(storage: Storage, days: int, hr_ceiling: int | None = None
           Run <code>grd sync</code> in garmin-running-data first.</p>
         </div>
         """
-        return f"<style>{_STYLE}</style><div class=\"rr-report\">{body}</div>"
+        return f'<style>{_STYLE}</style><div class="rr-report">{body}</div>'
 
     total_km = sum(a.distance_m for a, _ in activities) / 1000
     total_min = sum(a.duration_s for a, _ in activities) / 60
@@ -289,7 +289,7 @@ def build_html_report(storage: Storage, days: int, hr_ceiling: int | None = None
       </p>
     </div>
     """
-    return f"<style>{_STYLE}</style><div class=\"rr-report\">{body}</div>"
+    return f'<style>{_STYLE}</style><div class="rr-report">{body}</div>'
 
 
 def build_html_document(storage: Storage, days: int, hr_ceiling: int | None = None) -> str:

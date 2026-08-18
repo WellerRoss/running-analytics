@@ -15,6 +15,16 @@ def load_samples(storage: Storage, activity_id: str) -> list[ActivitySample]:
     return [ActivitySample(**row) for row in df.iter_rows(named=True)]
 
 
+def load_activity(storage: Storage, activity_id: str) -> Activity | None:
+    df = storage.read_activities()
+    if df.is_empty():
+        return None
+    match = df.filter(df["activity_id"] == activity_id)
+    if match.is_empty():
+        return None
+    return Activity(**match.row(0, named=True))
+
+
 def recent_activities(storage: Storage, days: int) -> list[tuple[Activity, list[ActivitySample]]]:
     df = storage.read_activities()
     if df.is_empty():

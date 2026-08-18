@@ -46,8 +46,7 @@ def build_report(storage: Storage, days: int, hr_ceiling: int | None = None) -> 
     activities = recent_activities(storage, days)
     if not activities:
         return (
-            f"No activities in the last {days} days. "
-            "Run `grd sync` in garmin-running-data first."
+            f"No activities in the last {days} days. Run `grd sync` in garmin-running-data first."
         )
 
     lines = [f"# Running report: last {days} days", ""]
