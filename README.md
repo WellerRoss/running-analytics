@@ -25,9 +25,11 @@ uv run ra --days 14                                    # Markdown report to stdo
 uv run ra --days 14 --hr-ceiling 165                   # also report time-to-reach 165bpm per run
 uv run ra --days 14 --out report.md                    # write Markdown to a file instead
 uv run ra --days 14 --format html --out report.html    # standalone HTML report
+uv run ra overlay <activity_id> --out overlay.html     # HR-vs-target overlay chart for one run
 ```
 
-(There's only one command, so Typer collapses `ra report ...` to just `ra ...`.)
+The report is the default command — `ra --days 14 ...` runs it directly, no
+subcommand name needed. `ra overlay <activity_id>` is the one other command.
 
 The HTML report (`html_report.py`) renders the same data as a self-contained "instrument
 panel": stat tiles up top, then one card per run with a proportional run/walk segment bar

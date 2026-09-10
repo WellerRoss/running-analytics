@@ -9,7 +9,10 @@ from running_analytics.html_report import build_html_document
 from running_analytics.overlay_chart import build_overlay_document
 from running_analytics.report import build_report
 
-app = typer.Typer(help="Derived running metrics and reports, built on garmin-running-data.")
+app = typer.Typer(
+    help="Derived running metrics and reports, built on garmin-running-data.",
+    no_args_is_help=False,
+)
 
 
 class ReportFormat(StrEnum):
@@ -17,8 +20,9 @@ class ReportFormat(StrEnum):
     html = "html"
 
 
-@app.command()
+@app.callback(invoke_without_command=True)
 def report(
+    ctx: typer.Context,
     days: int = typer.Option(14, help="How many days back to summarize."),
     hr_ceiling: int | None = typer.Option(
         None, help="If set, report time-to-reach this HR (bpm) for each run."
@@ -30,7 +34,15 @@ def report(
         None, help="Write the report to this file instead of stdout."
     ),
 ) -> None:
-    """Generate a report (Markdown or standalone HTML) of derived running metrics."""
+    """Generate a report (Markdown or standalone HTML) of derived running metrics.
+
+    This is the default command — `ra --days 14 ...` runs it directly, with no
+    subcommand name. `ra overlay <activity_id>` is the one other command; when
+    it (or any future subcommand) is invoked, this report is skipped.
+    """
+    if ctx.invoked_subcommand is not None:
+        return
+
     settings = get_settings()
     storage = Storage(settings.activities_db_path, settings.samples_dir)
 
